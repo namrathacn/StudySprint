@@ -1,183 +1,212 @@
-import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
-import { apiRequest } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
 
+import {createUserWithEmailAndPassword} from "firebase/auth";
 
+import {auth} from "../firebase";
 
-function Register() {
+import {useNavigate} from "react-router-dom";
 
 
-    const [name,setName] = useState("");
 
-    const [email,setEmail] = useState("");
+function Register(){
 
-    const [password,setPassword] = useState("");
 
-    const navigate = useNavigate();
+const navigate=useNavigate();
 
 
+const [email,setEmail]=useState("");
 
+const [password,setPassword]=useState("");
 
 
-    const register = async()=>{
 
 
-        try{
 
+const register=async(e)=>{
 
-            const userCredential = await createUserWithEmailAndPassword(
 
-                auth,
+e.preventDefault();
 
-                email,
 
-                password
 
-            );
+try{
 
 
+const result=await createUserWithEmailAndPassword(
 
-            const user = userCredential.user;
+auth,
 
+email,
 
+password
 
+);
 
-            await apiRequest("/auth/register",{
 
 
-                method:"POST",
 
+const token=await result.user.getIdToken();
 
-                body:JSON.stringify({
 
 
-                    uid:user.uid,
+localStorage.setItem(
 
-                    name:name,
+"token",
 
-                    email:email
+token
 
+);
 
-                })
 
 
-            });
+localStorage.setItem(
 
+"user",
 
+JSON.stringify({
 
+email:result.user.email,
 
+uid:result.user.uid
 
-            navigate("/login");
+})
 
+);
 
 
-        }
-        catch(error){
 
+navigate("/dashboard");
 
-            console.log(error.message);
 
+}
 
-        }
+catch(error){
 
 
-    };
+console.log(error);
 
 
+}
 
 
+};
 
 
-    return (
 
-        <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center">
 
 
-            <div className="bg-slate-800 p-10 rounded-xl w-96">
 
+return(
 
-                <h1 className="text-3xl font-bold mb-8">
+<div className="
+min-h-screen
+bg-[#020617]
+text-white
+flex
+items-center
+justify-center
+px-6
+">
 
-                    Register
 
-                </h1>
+<form
 
+onSubmit={register}
 
+className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-10
+w-full
+max-w-md
+"
 
 
-                <input
+>
 
-                placeholder="Name"
 
-                value={name}
+<h1 className="
+text-4xl
+font-black
+mb-8
+">
 
-                onChange={(e)=>setName(e.target.value)}
+Create Account
 
-                className="w-full bg-slate-700 p-3 rounded mb-4"
+</h1>
 
-                />
 
 
+<input
 
+placeholder="Email"
 
+value={email}
 
-                <input
+onChange={(e)=>setEmail(e.target.value)}
 
-                placeholder="Email"
+className="
+w-full
+p-4
+rounded-xl
+bg-white/10
+mb-4
+"
 
-                value={email}
+/>
 
-                onChange={(e)=>setEmail(e.target.value)}
 
-                className="w-full bg-slate-700 p-3 rounded mb-4"
 
-                />
+<input
 
+type="password"
 
+placeholder="Password"
 
+value={password}
 
+onChange={(e)=>setPassword(e.target.value)}
 
-                <input
+className="
+w-full
+p-4
+rounded-xl
+bg-white/10
+mb-6
+"
 
-                type="password"
+/>
 
-                placeholder="Password"
 
-                value={password}
 
-                onChange={(e)=>setPassword(e.target.value)}
 
-                className="w-full bg-slate-700 p-3 rounded mb-6"
+<button
 
-                />
+className="
+w-full
+bg-emerald-500
+text-black
+py-4
+rounded-xl
+font-bold
+"
 
+>
 
+Register
 
+</button>
 
 
+</form>
 
-                <button
 
-                onClick={register}
+</div>
 
-                className="w-full bg-blue-600 py-3 rounded cursor-pointer"
 
-                >
-
-                    Create Account
-
-                </button>
-
-
-
-            </div>
-
-
-        </div>
-
-    );
+);
 
 
 }

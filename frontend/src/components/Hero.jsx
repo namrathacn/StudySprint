@@ -1,57 +1,182 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+function Hero(){
 
-function Hero() {
-  return (
-    <section className="min-h-screen flex items-center justify-center px-6 pt-24">
-      <div className="max-w-5xl mx-auto text-center">
+return(
 
-        <motion.h1
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-5xl md:text-7xl font-black leading-tight"
-        >
-          Study Smarter.
-          <br />
-          Stay Consistent.
-        </motion.h1>
+<section className="
+min-h-screen
+flex
+items-center
+px-6
+pt-32
+">
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="mt-8 text-slate-400 text-lg md:text-xl max-w-3xl mx-auto"
-        >
-          Organize your study sessions, manage tasks, track your
-          progress, and achieve your goals with one beautiful
-          productivity dashboard.
-        </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex flex-col sm:flex-row justify-center gap-5 mt-12"
-        >
-          <Link
-            to="/dashboard"
-            className="bg-emerald-500 hover:bg-emerald-400 transition px-8 py-4 rounded-2xl text-black font-bold"
-          >
-            Get Started
-          </Link>
+<div className="
+max-w-7xl
+mx-auto
+grid
+md:grid-cols-2
+gap-10
+items-center
+">
 
-          <Link
-            to="/login"
-            className="border border-white/20 hover:border-emerald-400 transition px-8 py-4 rounded-2xl"
-          >
-            Login
-          </Link>
-        </motion.div>
 
-      </div>
-    </section>
-  );
+<div>
+
+
+<h1 className="
+text-6xl
+font-black
+leading-tight
+">
+
+Study Smarter.
+
+<br/>
+
+Achieve More.
+
+</h1>
+
+
+
+<p className="
+mt-6
+text-xl
+text-slate-400
+max-w-xl
+">
+
+StudySprint helps you manage tasks, track goals and improve your study productivity.
+
+</p>
+
+
+
+
+<div className="
+mt-8
+flex
+gap-5
+">
+
+
+<a
+
+href="/register"
+
+className="
+bg-emerald-500
+text-black
+px-8
+py-4
+rounded-xl
+font-bold
+"
+
+>
+
+Get Started
+
+</a>
+
+
+
+<a
+
+href="/dashboard"
+
+className="
+border
+border-white/20
+px-8
+py-4
+rounded-xl
+font-bold
+"
+
+>
+
+Dashboard
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-10
+">
+
+
+<h2 className="
+text-4xl
+font-black
+">
+
+Your Progress
+
+</h2>
+
+
+<p className="
+mt-5
+text-slate-400
+">
+
+Complete tasks, achieve goals and build better study habits.
+
+</p>
+
+
+
+<div className="
+mt-8
+h-4
+bg-slate-800
+rounded-full
+">
+
+
+<div className="
+h-full
+w-3/4
+bg-emerald-500
+rounded-full
+">
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+</div>
+
+
+</section>
+
+
+);
+
+
 }
+
 
 export default Hero;

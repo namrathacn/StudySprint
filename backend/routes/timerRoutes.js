@@ -1,110 +1,59 @@
-const express = require("express");
-const router = express.Router();
+const express=require("express");
 
-const { db } = require("../config/firebase");
+const router=express.Router();
 
+const {db}=require("../config/firebase");
 
-
-router.post("/", async(req,res)=>{
-
-
-    try{
-
-
-        const data = req.body;
-
-
-        await db.collection("timers").add({
-
-
-            duration: data.duration,
-
-            completedSessions: data.completedSessions,
-
-            createdAt: new Date()
-
-
-        });
+const verifyToken=require("../middleware/authMiddleware");
 
 
 
-        res.json({
-
-            message:"Timer session saved successfully"
-
-        });
+router.use(verifyToken);
 
 
-    }
-    catch(error){
+
+router.post("/",async(req,res)=>{
 
 
-        console.log(error);
+try{
 
 
-        res.status(500).json({
+await db.collection("timers").add({
 
-            message:error.message
+uid:req.user.uid,
 
-        });
+duration:req.body.duration,
+
+createdAt:new Date()
+
+});
 
 
-    }
+
+res.json({
+
+message:"Session saved"
+
+});
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
 
 
 });
 
 
 
-
-
-router.get("/", async(req,res)=>{
-
-
-    try{
-
-
-        const snapshot = await db.collection("timers").get();
-
-
-        const timers = [];
-
-
-        snapshot.forEach((doc)=>{
-
-
-            timers.push({
-
-                id:doc.id,
-
-                ...doc.data()
-
-            });
-
-
-        });
-
-
-
-        res.json(timers);
-
-
-    }
-    catch(error){
-
-
-        res.status(500).json({
-
-            message:error.message
-
-        });
-
-
-    }
-
-
-});
-
-
-
-module.exports = router;
+module.exports=router;

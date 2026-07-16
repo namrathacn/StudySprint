@@ -1,122 +1,74 @@
-const express = require("express");
-const router = express.Router();
+const express=require("express");
 
-const { db } = require("../config/firebase");
+const router=express.Router();
 
+const {db}=require("../config/firebase");
 
-
-// GET TASKS
-router.get("/", async(req,res)=>{
+const verifyToken=require("../middleware/authMiddleware");
 
 
-    try{
+
+router.use(verifyToken);
 
 
-        const snapshot = await db.collection("tasks").get();
 
 
-        const tasks = [];
+
+router.get("/",async(req,res)=>{
 
 
-        snapshot.forEach((doc)=>{
+try{
 
 
-            tasks.push({
+const snapshot=await db
 
-                id:doc.id,
+.collection("tasks")
 
-                ...doc.data()
+.where("uid","==",req.user.uid)
 
-            });
-
-
-        });
+.get();
 
 
-        res.json(tasks);
 
 
-    }
-    catch(error){
+const tasks=[];
 
 
-        res.status(500).json({
 
-            message:error.message
-
-        });
+snapshot.forEach(doc=>{
 
 
-    }
+tasks.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
 
 
 });
 
 
 
-
-
-// ADD TASK
-router.post("/", async(req,res)=>{
-
-
-    try{
-
-
-        const {title,subject}=req.body;
+res.json(tasks);
 
 
 
-        if(!title || !subject){
+}
+
+catch(error){
 
 
-            return res.status(400).json({
+res.status(500).json({
 
-                message:"Title and Subject required"
+message:error.message
 
-            });
-
-
-        }
+});
 
 
+}
 
-        const newTask = await db.collection("tasks").add({
-
-
-            title:title,
-
-            subject:subject,
-
-            completed:false,
-
-
-        });
-
-
-
-        res.json({
-
-            id:newTask.id,
-
-            message:"Task added"
-
-        });
-
-
-
-    }
-    catch(error){
-
-
-        res.status(500).json({
-
-            message:error.message
-
-        });
-
-
-    }
 
 
 });
@@ -127,54 +79,57 @@ router.post("/", async(req,res)=>{
 
 
 
-// UPDATE TASK STATUS
-router.put("/:id", async(req,res)=>{
+router.post("/",async(req,res)=>{
 
 
-    try{
+try{
 
 
-        console.log("Updating ID:", req.params.id);
+const data={
 
-        console.log("New value:", req.body.completed);
+...req.body,
 
+uid:req.user.uid,
 
+createdAt:new Date()
 
-        await db.collection("tasks")
-
-        .doc(req.params.id)
-
-        .set({
-
-            completed:req.body.completed
-
-        },{merge:true});
+};
 
 
 
-        res.json({
 
-            message:"Task status updated"
+const doc=await db
 
-        });
+.collection("tasks")
 
-
-
-    }
-    catch(error){
+.add(data);
 
 
-        console.log(error);
 
 
-        res.status(500).json({
+res.json({
 
-            message:error.message
+id:doc.id,
 
-        });
+...data
+
+});
 
 
-    }
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
 
 
 });
@@ -184,45 +139,99 @@ router.put("/:id", async(req,res)=>{
 
 
 
-// DELETE TASK
-router.delete("/:id", async(req,res)=>{
+
+router.put("/:id",async(req,res)=>{
 
 
-    try{
+try{
 
 
-        await db.collection("tasks")
+await db
 
-        .doc(req.params.id)
+.collection("tasks")
 
-        .delete();
+.doc(req.params.id)
 
-
-
-        res.json({
-
-            message:"Task deleted"
-
-        });
+.update(req.body);
 
 
 
-    }
-    catch(error){
+res.json({
+
+message:"Task updated"
+
+});
 
 
-        res.status(500).json({
 
-            message:error.message
+}
 
-        });
+catch(error){
 
 
-    }
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 
 });
 
 
 
-module.exports = router;
+
+
+
+
+
+router.delete("/:id",async(req,res)=>{
+
+
+try{
+
+
+await db
+
+.collection("tasks")
+
+.doc(req.params.id)
+
+.delete();
+
+
+
+res.json({
+
+message:"Deleted"
+
+});
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
+
+
+});
+
+
+
+
+module.exports=router;

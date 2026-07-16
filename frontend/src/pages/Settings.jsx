@@ -1,679 +1,603 @@
+import {useEffect,useState} from "react";
+
 import Navbar from "../components/Navbar";
 
 import {
-  FiSettings,
-  FiBell,
-  FiClock,
-  FiMoon,
-  FiSave,
+FiSettings,
+FiBell,
+FiLock,
+FiLogOut,
+FiTrash2
 } from "react-icons/fi";
 
-import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 
 
+function Settings(){
 
 
+const navigate = useNavigate();
 
 
-function Settings() {
 
+const [theme,setTheme] = useState(
 
+localStorage.getItem("theme") || "dark"
 
-  const [notifications,setNotifications] = useState(true);
+);
 
-  const [timer,setTimer] = useState(25);
 
-  const [saved,setSaved] = useState(false);
 
+const [notifications,setNotifications] = useState(
 
+localStorage.getItem("notifications")==="true"
 
+);
 
 
 
 
 
-  const saveSettings=()=>{
+useEffect(()=>{
 
 
-    setSaved(true);
+if(theme==="light"){
 
-
-    setTimeout(()=>{
-
-
-      setSaved(false);
-
-
-    },2000);
-
-
-
-  };
-
-
-
-
-
-
-
-
-  return (
-
-
-
-    <div className="
-    min-h-screen
-    bg-[#020617]
-    text-white
-    ">
-
-
-
-
-
-
-
-      <Navbar />
-
-
-
-
-
-
-
-      <main className="
-      pt-32
-      px-6
-      pb-20
-      ">
-
-
-
-
-
-
-
-        <div className="
-        max-w-5xl
-        mx-auto
-        ">
-
-
-
-
-
-
-
-          <h1 className="
-          text-5xl
-          font-black
-          ">
-
-
-            Settings
-
-
-
-          </h1>
-
-
-
-
-
-
-
-          <p className="
-          text-slate-400
-          mt-3
-          ">
-
-
-            Customize your StudySprint experience.
-
-
-
-          </p>
-
-
-
-
-
-
-
-
-
-          <div className="
-          mt-10
-          space-y-6
-          ">
-
-
-
-
-
-
-
-
-            {/* General */}
-
-
-
-            <div className="
-            rounded-3xl
-            border
-            border-white/10
-            bg-white/5
-            backdrop-blur-xl
-            p-8
-            ">
-
-
-
-
-
-
-
-
-              <div className="
-              flex
-              items-center
-              gap-4
-              ">
-
-
-
-                <FiSettings className="
-                text-emerald-400
-                text-3xl
-                "/>
-
-
-
-
-
-                <h2 className="
-                text-3xl
-                font-black
-                ">
-
-
-                  General
-
-
-
-                </h2>
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <input
-
-
-                placeholder="Display Name"
-
-
-
-                className="
-                mt-6
-                w-full
-                bg-white/10
-                border
-                border-white/10
-                rounded-xl
-                px-5
-                py-3
-                outline-none
-                "
-
-
-              />
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-            {/* Notification */}
-
-
-
-            <div className="
-            rounded-3xl
-            border
-            border-white/10
-            bg-white/5
-            backdrop-blur-xl
-            p-8
-            ">
-
-
-
-
-
-
-
-              <div className="
-              flex
-              items-center
-              gap-4
-              ">
-
-
-
-                <FiBell className="
-                text-emerald-400
-                text-3xl
-                "/>
-
-
-
-
-
-                <h2 className="
-                text-3xl
-                font-black
-                ">
-
-
-                  Notifications
-
-
-
-                </h2>
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <div className="
-              flex
-              justify-between
-              items-center
-              mt-6
-              ">
-
-
-
-                <p className="
-                text-slate-300
-                ">
-
-
-                  Study reminders
-
-
-
-                </p>
-
-
-
-
-
-
-
-                <button
-
-
-                  onClick={()=>setNotifications(!notifications)}
-
-
-
-                  className={`
-                  w-14
-                  h-7
-                  rounded-full
-                  ${notifications ? "bg-emerald-500" : "bg-slate-600"}
-                  `}
-                >
-
-
-
-                  <div className={`
-                  w-5
-                  h-5
-                  bg-white
-                  rounded-full
-                  transition
-                  ${notifications ? "translate-x-8" : "translate-x-1"}
-                  `} />
-
-
-                </button>
-
-
-
-
-
-
-
-              </div>
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-            {/* Timer */}
-
-
-
-            <div className="
-            rounded-3xl
-            border
-            border-white/10
-            bg-white/5
-            backdrop-blur-xl
-            p-8
-            ">
-
-
-
-
-
-
-
-              <div className="
-              flex
-              items-center
-              gap-4
-              ">
-
-
-
-                <FiClock className="
-                text-emerald-400
-                text-3xl
-                "/>
-
-
-
-
-
-                <h2 className="
-                text-3xl
-                font-black
-                ">
-
-
-                  Default Timer
-
-
-
-                </h2>
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <select
-
-
-                value={timer}
-
-
-                onChange={(e)=>setTimer(e.target.value)}
-
-
-
-                className="
-                mt-6
-                bg-white/10
-                border
-                border-white/10
-                rounded-xl
-                px-5
-                py-3
-                "
-
-
-
-              >
-
-
-
-                <option value="15">
-                  15 Minutes
-                </option>
-
-
-
-                <option value="25">
-                  25 Minutes
-                </option>
-
-
-
-                <option value="45">
-                  45 Minutes
-                </option>
-
-
-
-                <option value="60">
-                  60 Minutes
-                </option>
-
-
-
-              </select>
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-            {/* Appearance */}
-
-
-
-            <div className="
-            rounded-3xl
-            border
-            border-white/10
-            bg-white/5
-            backdrop-blur-xl
-            p-8
-            ">
-
-
-
-
-
-
-
-              <div className="
-              flex
-              items-center
-              gap-4
-              ">
-
-
-
-                <FiMoon className="
-                text-emerald-400
-                text-3xl
-                "/>
-
-
-
-
-
-                <h2 className="
-                text-3xl
-                font-black
-                ">
-
-
-                  Appearance
-
-
-
-                </h2>
-
-
-
-              </div>
-
-
-
-
-
-
-
-              <p className="
-              text-slate-400
-              mt-4
-              ">
-
-
-                Dark mode is enabled
-
-
-
-              </p>
-
-
-
-
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-            <button
-
-
-              onClick={saveSettings}
-
-
-
-              className="
-              flex
-              items-center
-              justify-center
-              gap-3
-              w-full
-              bg-emerald-500
-              text-black
-              font-black
-              py-4
-              rounded-2xl
-              "
-
-
-
-            >
-
-
-              <FiSave />
-
-
-              {saved ? "Saved!" : "Save Settings"}
-
-
-
-            </button>
-
-
-
-
-
-
-
-          </div>
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-      </main>
-
-
-
-
-
-
-
-    </div>
-
-
-
-  );
-
+document.body.classList.add("light-theme");
 
 }
 
+else{
+
+document.body.classList.remove("light-theme");
+
+}
+
+
+
+localStorage.setItem(
+
+"theme",
+
+theme
+
+);
+
+
+
+},[theme]);
+
+
+
+
+
+
+
+const changeNotifications=()=>{
+
+
+const value=!notifications;
+
+
+setNotifications(value);
+
+
+localStorage.setItem(
+
+"notifications",
+
+value
+
+);
+
+
+};
+
+
+
+
+
+
+const logout=()=>{
+
+
+localStorage.clear();
+
+
+navigate("/login");
+
+
+};
+
+
+
+
+
+
+
+return(
+
+
+<div className="
+min-h-screen
+bg-[#020617]
+text-white
+">
+
+
+<Navbar />
+
+
+
+<div className="
+pt-32
+px-6
+pb-20
+max-w-5xl
+mx-auto
+">
+
+
+
+<h1 className="
+text-5xl
+font-black
+mb-10
+">
+
+Settings
+
+</h1>
+
+
+
+
+
+<div className="
+space-y-6
+">
+
+
+
+
+
+
+{/* Appearance */}
+
+<div className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-8
+">
+
+
+<div className="
+flex
+items-center
+gap-5
+">
+
+
+<div className="
+bg-emerald-500
+text-black
+p-4
+rounded-2xl
+">
+
+
+<FiSettings size={30}/>
+
+
+</div>
+
+
+
+
+<div>
+
+
+<h2 className="
+text-2xl
+font-bold
+">
+
+Appearance
+
+</h2>
+
+
+<p className="
+text-slate-400
+mt-2
+">
+
+Change your StudySprint theme
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<button
+
+onClick={()=>setTheme(
+
+theme==="dark"
+
+?
+
+"light"
+
+:
+
+"dark"
+
+)}
+
+className="
+mt-6
+bg-emerald-500
+text-black
+px-8
+py-3
+rounded-xl
+font-bold
+"
+
+>
+
+
+{
+
+theme==="dark"
+
+?
+
+"☀ Light Mode"
+
+:
+
+"🌙 Dark Mode"
+
+}
+
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{/* Notifications */}
+
+
+<div className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-8
+">
+
+
+<div className="
+flex
+items-center
+justify-between
+">
+
+
+
+<div className="
+flex
+items-center
+gap-5
+">
+
+
+
+<div className="
+bg-emerald-500
+text-black
+p-4
+rounded-2xl
+">
+
+
+<FiBell size={30}/>
+
+
+</div>
+
+
+
+
+
+<div>
+
+
+<h2 className="
+text-2xl
+font-bold
+">
+
+Notifications
+
+</h2>
+
+
+
+<p className="
+text-slate-400
+mt-2
+">
+
+Timer completion reminders
+
+</p>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<button
+
+onClick={changeNotifications}
+
+className={`
+px-6
+py-3
+rounded-xl
+font-bold
+
+${
+notifications
+
+?
+
+"bg-emerald-500 text-black"
+
+:
+
+"bg-slate-700 text-white"
+
+}
+
+`}
+
+>
+
+
+{
+
+notifications
+
+?
+
+"ON"
+
+:
+
+"OFF"
+
+}
+
+
+</button>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{/* Privacy */}
+
+
+
+<div className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-8
+">
+
+
+<div className="
+flex
+items-center
+gap-5
+">
+
+
+
+<div className="
+bg-emerald-500
+text-black
+p-4
+rounded-2xl
+">
+
+
+<FiLock size={30}/>
+
+
+</div>
+
+
+
+
+
+<div>
+
+
+<h2 className="
+text-2xl
+font-bold
+">
+
+Privacy
+
+</h2>
+
+
+<p className="
+text-slate-400
+mt-2
+">
+
+Manage your account security
+
+</p>
+
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<div className="
+mt-8
+flex
+gap-4
+flex-wrap
+">
+
+
+
+<button
+
+onClick={logout}
+
+className="
+bg-red-500
+px-6
+py-3
+rounded-xl
+font-bold
+flex
+items-center
+gap-2
+"
+
+>
+
+
+<FiLogOut/>
+
+Logout
+
+
+</button>
+
+
+
+
+
+
+
+<button
+
+className="
+bg-red-900
+px-6
+py-3
+rounded-xl
+font-bold
+flex
+items-center
+gap-2
+"
+
+>
+
+
+<FiTrash2/>
+
+Delete Account
+
+
+</button>
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+);
+
+
+}
 
 
 export default Settings;

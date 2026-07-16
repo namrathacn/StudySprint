@@ -1,351 +1,354 @@
-import { useEffect, useState } from "react";
-import { apiRequest } from "../services/api";
+import {useEffect,useState} from "react";
 
+import Navbar from "../components/Navbar";
 
-function Timer() {
+import {apiRequest} from "../services/api";
 
 
-    const [minutes, setMinutes] = useState(25);
 
-    const [seconds, setSeconds] = useState(0);
+function Timer(){
 
-    const [inputMinutes, setInputMinutes] = useState(25);
 
-    const [running, setRunning] = useState(false);
+const [minutes,setMinutes]=useState(25);
 
-    const [sessions, setSessions] = useState(0);
+const [seconds,setSeconds]=useState(0);
 
+const [running,setRunning]=useState(false);
 
+const [notification,setNotification]=useState(false);
 
 
 
 
-    useEffect(()=>{
 
 
-        let timer;
 
+useEffect(()=>{
 
 
-        if(running){
+setNotification(
 
+localStorage.getItem("notifications")==="true"
 
-            timer = setInterval(()=>{
+);
 
 
-                if(seconds > 0){
+},[]);
 
 
-                    setSeconds(seconds - 1);
 
 
-                }
-                else if(minutes > 0){
 
 
-                    setMinutes(minutes - 1);
 
-                    setSeconds(59);
+useEffect(()=>{
 
 
-                }
-                else{
+let timer;
 
 
-                    saveSession();
 
-                    setRunning(false);
+if(running){
 
 
-                }
 
+timer=setInterval(()=>{
 
-            },1000);
 
 
-        }
+if(seconds===0){
 
 
 
-        return ()=>clearInterval(timer);
+if(minutes===0){
 
 
 
-    },[running,minutes,seconds]);
+setRunning(false);
 
 
 
+saveSession();
 
 
 
+if(notification){
 
-    const setTimer = (time)=>{
+alert("Study session completed!");
 
+}
 
-        setRunning(false);
 
 
-        setInputMinutes(time);
+reset();
 
 
-        setMinutes(time);
+}
 
+else{
 
-        setSeconds(0);
 
+setMinutes(minutes-1);
 
-    };
+setSeconds(59);
 
 
+}
 
 
 
+}
 
+else{
 
 
-    const saveSession = async()=>{
+setSeconds(seconds-1);
 
 
-        const updatedSessions = sessions + 1;
+}
 
 
-        setSessions(updatedSessions);
 
 
+},1000);
 
-        try{
 
 
-            await apiRequest("/timer",{
+}
 
-                method:"POST",
 
-                body:JSON.stringify({
 
-                    duration:Number(inputMinutes),
+return()=>clearInterval(timer);
 
-                    completedSessions:updatedSessions
 
-                })
 
-            });
+},[running,minutes,seconds]);
 
 
 
-        }
-        catch(error){
 
 
-            console.log(error);
 
 
-        }
 
 
-    };
+const saveSession=async()=>{
 
 
+try{
 
 
+await apiRequest("/timer",{
 
+method:"POST",
 
+body:JSON.stringify({
 
+duration:25
 
-    const startTimer = ()=>{
+})
 
+});
 
-        setRunning(true);
 
+}
 
-    };
+catch(error){
 
 
+console.log(error);
 
 
+}
 
 
-    const resetTimer = ()=>{
+};
 
 
-        setRunning(false);
 
 
-        setMinutes(Number(inputMinutes));
 
 
-        setSeconds(0);
 
+const reset=()=>{
 
-    };
 
+setMinutes(25);
 
+setSeconds(0);
 
 
+};
 
 
 
-    return (
 
-        <div className="min-h-screen bg-[#020617] text-white p-10">
 
 
-            <h1 className="text-3xl font-bold mb-8">
 
-                Focus Timer
 
-            </h1>
+return(
 
+<div className="
+min-h-screen
+bg-[#020617]
+text-white
+">
 
 
+<Navbar />
 
 
-            <div className="bg-slate-800 p-10 rounded-xl text-center">
 
+<div className="
+pt-32
+px-6
+flex
+justify-center
+">
 
 
-                <div className="flex justify-center gap-4 mb-8">
 
+<div className="
+bg-white/5
+border
+border-white/10
+rounded-3xl
+p-10
+max-w-lg
+w-full
+text-center
+">
 
-                    <button
 
-                    onClick={()=>setTimer(25)}
+<h1 className="
+text-5xl
+font-black
+">
 
-                    className="bg-blue-600 px-5 py-2 rounded cursor-pointer"
+Focus Timer
 
-                    >
+</h1>
 
-                        25 Min
 
-                    </button>
 
 
+<div className="
+text-7xl
+font-black
+mt-10
+">
 
+{String(minutes).padStart(2,"0")}:
 
-                    <button
+{String(seconds).padStart(2,"0")}
 
-                    onClick={()=>setTimer(50)}
+</div>
 
-                    className="bg-purple-600 px-5 py-2 rounded cursor-pointer"
 
-                    >
 
-                        50 Min
 
-                    </button>
 
 
-                </div>
+<div className="
+flex
+gap-5
+justify-center
+mt-10
+">
 
 
 
+<button
 
+onClick={()=>setRunning(!running)}
 
+className="
+bg-emerald-500
+text-black
+px-8
+py-3
+rounded-xl
+font-bold
+"
 
-                <input
+>
 
 
-                type="number"
+{
 
+running
 
-                value={inputMinutes}
+?
 
+"Pause"
 
-                onChange={(e)=>setInputMinutes(e.target.value)}
+:
 
+"Start"
 
-                className="bg-slate-700 p-3 rounded mb-8 w-40 text-center"
+}
 
 
-                />
+</button>
 
 
 
 
+<button
 
+onClick={reset}
 
-                <h2 className="text-6xl font-bold mb-8">
+className="
+bg-slate-700
+px-8
+py-3
+rounded-xl
+font-bold
+"
 
+>
 
-                    {String(minutes).padStart(2,"0")}:
+Reset
 
-                    {String(seconds).padStart(2,"0")}
+</button>
 
 
-                </h2>
 
+</div>
 
 
 
 
 
-                <div className="flex justify-center gap-4">
 
+{
 
-                    <button
+notification &&
 
-                    onClick={startTimer}
+<p className="
+mt-6
+text-emerald-400
+">
 
-                    className="bg-green-600 px-6 py-3 rounded cursor-pointer"
+🔔 Reminder enabled
 
-                    >
+</p>
 
-                        Start
+}
 
-                    </button>
 
 
+</div>
 
 
+</div>
 
-                    <button
 
-                    onClick={()=>setRunning(false)}
+</div>
 
-                    className="bg-yellow-600 px-6 py-3 rounded cursor-pointer"
 
-                    >
-
-                        Pause
-
-                    </button>
-
-
-
-
-
-                    <button
-
-                    onClick={resetTimer}
-
-                    className="bg-red-600 px-6 py-3 rounded cursor-pointer"
-
-                    >
-
-                        Reset
-
-                    </button>
-
-
-                </div>
-
-
-
-
-
-                <p className="mt-8 text-xl">
-
-                    Completed Sessions: {sessions}
-
-                </p>
-
-
-
-            </div>
-
-
-        </div>
-
-    );
+);
 
 
 }

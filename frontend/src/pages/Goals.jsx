@@ -6,10 +6,10 @@ import {apiRequest} from "../services/api";
 
 
 
-function Tasks(){
+function Goals(){
 
 
-const [tasks,setTasks]=useState([]);
+const [goals,setGoals]=useState([]);
 
 const [title,setTitle]=useState("");
 
@@ -22,7 +22,7 @@ const [title,setTitle]=useState("");
 useEffect(()=>{
 
 
-loadTasks();
+loadGoals();
 
 
 },[]);
@@ -32,17 +32,16 @@ loadTasks();
 
 
 
-
-const loadTasks=async()=>{
+const loadGoals=async()=>{
 
 
 try{
 
 
-const data=await apiRequest("/tasks");
+const data=await apiRequest("/goals");
 
 
-setTasks(data);
+setGoals(data);
 
 
 }
@@ -62,7 +61,7 @@ console.log(error);
 
 
 
-const addTask=async()=>{
+const addGoal=async()=>{
 
 
 if(!title.trim()) return;
@@ -73,7 +72,7 @@ if(!title.trim()) return;
 try{
 
 
-await apiRequest("/tasks",{
+await apiRequest("/goals",{
 
 method:"POST",
 
@@ -92,7 +91,7 @@ completed:false
 setTitle("");
 
 
-loadTasks();
+loadGoals();
 
 
 }
@@ -112,13 +111,13 @@ console.log(error);
 
 
 
-const toggleTask=async(id,completed)=>{
+const completeGoal=async(id,completed)=>{
 
 
 try{
 
 
-await apiRequest(`/tasks/${id}`,{
+await apiRequest(`/goals/${id}`,{
 
 method:"PUT",
 
@@ -132,7 +131,7 @@ completed:!completed
 
 
 
-loadTasks();
+loadGoals();
 
 
 }
@@ -145,7 +144,6 @@ console.log(error);
 
 
 };
-
 
 
 
@@ -176,18 +174,15 @@ mx-auto
 
 
 
-
-
 <h1 className="
 text-5xl
 font-black
 mb-10
 ">
 
-Tasks
+Goals
 
 </h1>
-
 
 
 
@@ -205,6 +200,7 @@ mb-8
 ">
 
 
+
 <div className="
 flex
 gap-4
@@ -217,7 +213,7 @@ value={title}
 
 onChange={(e)=>setTitle(e.target.value)}
 
-placeholder="Add new task"
+placeholder="Create new goal"
 
 className="
 flex-1
@@ -231,15 +227,14 @@ rounded-xl
 
 
 
-
 <button
 
-onClick={addTask}
+onClick={addGoal}
 
 className="
 bg-emerald-500
 text-black
-px-7
+px-6
 rounded-xl
 font-bold
 "
@@ -255,8 +250,8 @@ Add
 </div>
 
 
-</div>
 
+</div>
 
 
 
@@ -272,35 +267,12 @@ space-y-5
 
 {
 
-tasks.length===0 &&
-
-
-<div className="
-text-slate-400
-text-xl
-">
-
-No tasks yet. Create your first task.
-
-</div>
-
-
-}
-
-
-
-
-
-
-
-{
-
-tasks.map((task)=>(
+goals.map((goal)=>(
 
 
 <div
 
-key={task.id}
+key={goal.id}
 
 className="
 bg-white/5
@@ -309,26 +281,31 @@ border-white/10
 rounded-3xl
 p-6
 flex
-items-center
 justify-between
+items-center
 "
 
 >
 
 
 
+<div>
+
+
 <h2 className={`
 text-2xl
 font-bold
 
-${task.completed ? "line-through text-slate-500":""}
+${goal.completed ? "line-through text-slate-500":""}
 
 `}>
 
-{task.title}
+{goal.title}
 
 </h2>
 
+
+</div>
 
 
 
@@ -336,19 +313,19 @@ ${task.completed ? "line-through text-slate-500":""}
 
 <button
 
-onClick={()=>toggleTask(
+onClick={()=>completeGoal(
 
-task.id,
+goal.id,
 
-task.completed
+goal.completed
 
 )}
 
 className="
 bg-emerald-500
 text-black
-px-6
-py-3
+px-5
+py-2
 rounded-xl
 font-bold
 "
@@ -358,15 +335,15 @@ font-bold
 
 {
 
-task.completed
+goal.completed
 
 ?
 
-"Done"
+"Completed"
 
 :
 
-"Complete"
+"Finish"
 
 }
 
@@ -391,7 +368,6 @@ task.completed
 
 
 
-
 </div>
 
 
@@ -404,4 +380,4 @@ task.completed
 }
 
 
-export default Tasks;
+export default Goals;

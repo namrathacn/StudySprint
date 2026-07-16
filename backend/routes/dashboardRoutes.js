@@ -1,92 +1,186 @@
 const express = require("express");
+
 const router = express.Router();
 
-const { db } = require("../config/firebase");
+const {db}=require("../config/firebase");
+
+const verifyToken=require("../middleware/authMiddleware");
 
 
 
-router.get("/", async (req, res) => {
-
-    try {
-
-
-        const taskSnapshot = await db.collection("tasks").get();
-
-        const timerSnapshot = await db.collection("timers").get();
-
-
-
-        let totalTasks = 0;
-
-        let completedTasks = 0;
-
-        let sessions = 0;
-
-
-
-        taskSnapshot.forEach((doc)=>{
-
-
-            const task = doc.data();
-
-
-            totalTasks++;
-
-
-            if(task.completed === true){
-
-                completedTasks++;
-
-            }
-
-
-        });
+router.use(verifyToken);
 
 
 
 
 
-        timerSnapshot.forEach(()=>{
-
-            sessions++;
-
-        });
+router.get("/",async(req,res)=>{
 
 
+try{
 
 
-
-        res.json({
-
-            tasks: totalTasks,
-
-            completedTasks: completedTasks,
-
-            sessions: sessions
-
-        });
+const uid=req.user.uid;
 
 
 
-    }
-    catch(error){
 
 
-        console.log(error);
+const tasksSnapshot=await db
+
+.collection("tasks")
+
+.where("uid","==",uid)
+
+.get();
 
 
-        res.status(500).json({
-
-            message:error.message
-
-        });
 
 
-    }
+
+
+const goalsSnapshot=await db
+
+.collection("goals")
+
+.where("uid","==",uid)
+
+.get();
+
+
+
+
+
+
+const timerSnapshot=await db
+
+.collection("timers")
+
+.where("uid","==",uid)
+
+.get();
+
+
+
+
+
+
+
+
+let tasks=0;
+
+let completedTasks=0;
+
+
+let goals=0;
+
+let completedGoals=0;
+
+
+let sessions=0;
+
+
+
+
+
+
+tasksSnapshot.forEach(doc=>{
+
+
+tasks++;
+
+
+if(doc.data().completed){
+
+completedTasks++;
+
+}
 
 
 });
 
 
 
-module.exports = router;
+
+
+
+
+
+goalsSnapshot.forEach(doc=>{
+
+
+goals++;
+
+
+if(doc.data().completed){
+
+completedGoals++;
+
+}
+
+
+});
+
+
+
+
+
+
+
+
+timerSnapshot.forEach(doc=>{
+
+
+sessions++;
+
+
+});
+
+
+
+
+
+
+res.json({
+
+tasks,
+
+completedTasks,
+
+goals,
+
+completedGoals,
+
+sessions
+
+});
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+module.exports=router;

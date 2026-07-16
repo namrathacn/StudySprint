@@ -1,15 +1,41 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
+
 import { getAuth } from "firebase/auth";
 
+
+
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+
+  apiKey: "AIzaSyDnDFao7fbxbdsDKSyNTC9oETGYcjJV1Z0",
+
+  authDomain: "studysprint-95ab6.firebaseapp.com",
+
+  projectId: "studysprint-95ab6",
+
+  storageBucket: "studysprint-95ab6.firebasestorage.app",
+
+  messagingSenderId: "578323263172",
+
+  appId: "1:578323263172:web:51a65efb59cf810ce7a391"
+
 };
 
-const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+
+
+
+const app = getApps().length
+
+? getApps()[0]
+
+: initializeApp(firebaseConfig);
+
+
+
+
+
+const auth = getAuth(app);
+
+
+
+export { auth };

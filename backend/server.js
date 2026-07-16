@@ -1,18 +1,12 @@
 const express = require("express");
+
 const cors = require("cors");
 
 require("dotenv").config();
 
+
+
 require("./config/firebase");
-
-
-const taskRoutes = require("./routes/taskRoutes");
-
-const timerRoutes = require("./routes/timerRoutes");
-
-const dashboardRoutes = require("./routes/dashboardRoutes");
-
-const authRoutes = require("./routes/authRoutes");
 
 
 
@@ -21,20 +15,54 @@ const app = express();
 
 
 
-app.use(cors());
+
+app.use(cors({
+
+origin:[
+
+"http://localhost:5173"
+
+],
+
+credentials:true
+
+}));
+
+
+
 
 app.use(express.json());
 
 
 
 
-app.use("/tasks", taskRoutes);
 
-app.use("/timer", timerRoutes);
 
-app.use("/dashboard", dashboardRoutes);
 
-app.use("/auth", authRoutes);
+const taskRoutes = require("./routes/taskRoutes");
+
+const goalRoutes = require("./routes/goalRoutes");
+
+const dashboardRoutes = require("./routes/dashboardRoutes");
+
+const timerRoutes = require("./routes/timerRoutes");
+
+
+
+
+
+
+
+app.use("/api/tasks",taskRoutes);
+
+app.use("/api/goals",goalRoutes);
+
+app.use("/api/dashboard",dashboardRoutes);
+
+app.use("/api/timer",timerRoutes);
+
+
+
 
 
 
@@ -43,7 +71,7 @@ app.use("/auth", authRoutes);
 app.get("/",(req,res)=>{
 
 
-    res.send("StudySprint Backend Running");
+res.send("StudySprint API Running");
 
 
 });
@@ -52,10 +80,20 @@ app.get("/",(req,res)=>{
 
 
 
-app.listen(5000,()=>{
 
 
-    console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+
+
+app.listen(PORT,()=>{
+
+
+console.log(
+
+`Server running on port ${PORT}`
+
+);
 
 
 });
