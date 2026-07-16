@@ -1,60 +1,44 @@
-const { initializeApp, cert, getApps } = require("firebase-admin/app");
+const admin = require("firebase-admin");
 
-const { getFirestore } = require("firebase-admin/firestore");
-
-const { getAuth } = require("firebase-admin/auth");
+require("dotenv").config();
 
 
 
-const serviceAccount = require("../firebase-service-account.json");
+if (!admin.apps.length) {
 
 
+admin.initializeApp({
 
+credential: admin.credential.cert({
 
+projectId: process.env.FIREBASE_PROJECT_ID,
 
-const app = getApps().length === 0
+clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 
-?
-
-initializeApp({
-
-credential: cert(serviceAccount)
+privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g,"\n")
 
 })
 
-:
 
-getApps()[0];
-
+});
 
 
+console.log("Firebase Admin Connected Successfully");
 
 
-
-
-const db = getFirestore(app);
+}
 
 
 
-const auth = getAuth(app);
+const db = admin.firestore();
 
-
-
-
-
-console.log(
-
-"Firebase Admin Connected:",
-
-serviceAccount.project_id
-
-);
-
-
+const auth = admin.auth();
 
 
 
 module.exports = {
+
+admin,
 
 db,
 
