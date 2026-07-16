@@ -4,7 +4,10 @@ require("dotenv").config();
 
 
 
-if (!admin.apps.length) {
+try {
+
+
+if (admin.getApps().length === 0) {
 
 
 admin.initializeApp({
@@ -23,10 +26,21 @@ privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g,"\n")
 });
 
 
+}
+
+
 console.log("Firebase Admin Connected Successfully");
 
 
 }
+
+catch(error){
+
+console.log("Firebase Error:", error.message);
+
+}
+
+
 
 
 
