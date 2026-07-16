@@ -1,115 +1,141 @@
-import { motion } from "framer-motion";
-
+import { useEffect, useState } from "react";
+import { apiRequest } from "../services/api";
 import Navbar from "../components/Navbar";
-import ProgressChart from "../components/ProgressChart";
-import StudyTimer from "../components/StudyTimer";
-import TaskManager from "../components/TaskManager";
-import GoalTracker from "../components/GoalTracker";
+
 
 function Dashboard() {
-  return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <Navbar />
 
-      <motion.main
-        initial={{
-          opacity: 0,
-          y: 30,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          duration: 0.6,
-        }}
-        className="pt-32 px-6 pb-12"
-      >
-        <div className="max-w-7xl mx-auto">
 
-          <div className="mb-10">
+    const [stats,setStats] = useState({
 
-            <motion.h1
-              initial={{
-                opacity: 0,
-                x: -20,
-              }}
-              animate={{
-                opacity: 1,
-                x: 0,
-              }}
-              transition={{
-                delay: 0.2,
-                duration: 0.5,
-              }}
-              className="text-5xl font-black"
-            >
-              Dashboard
-            </motion.h1>
+        tasks:0,
 
-            <motion.p
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              transition={{
-                delay: 0.35,
-              }}
-              className="text-slate-400 mt-3"
-            >
-              Welcome back! Stay focused and keep making progress.
-            </motion.p>
+        completedTasks:0,
 
-          </div>
+        sessions:0
 
-          <div className="grid xl:grid-cols-3 gap-8">
+    });
 
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: -30,
-              }}
-              animate={{
-                opacity: 1,
-                x: 0,
-              }}
-              transition={{
-                delay: 0.45,
-              }}
-              className="xl:col-span-2 space-y-8"
-            >
-              <ProgressChart />
 
-              <TaskManager />
-            </motion.div>
 
-            <motion.div
-              initial={{
-                opacity: 0,
-                x: 30,
-              }}
-              animate={{
-                opacity: 1,
-                x: 0,
-              }}
-              transition={{
-                delay: 0.6,
-              }}
-              className="space-y-8"
-            >
-              <StudyTimer />
 
-              <GoalTracker />
-            </motion.div>
+    useEffect(()=>{
 
-          </div>
+        loadDashboard();
+
+    },[]);
+
+
+
+
+
+    const loadDashboard = async()=>{
+
+
+        try{
+
+
+            const data = await apiRequest("/dashboard");
+
+
+            console.log("FULL DASHBOARD DATA:", JSON.stringify(data));
+
+
+            setStats(data);
+
+
+        }
+        catch(error){
+
+            console.log(error);
+
+        }
+
+
+    };
+
+
+
+
+    const progress = stats.tasks === 0
+
+        ? 0
+
+        : Math.round((stats.completedTasks / stats.tasks) * 100);
+
+
+
+    return (
+
+        <div className="min-h-screen bg-[#020617] text-white">
+
+            <Navbar />
+
+            <div className="p-10">
+
+
+                <h1 className="text-4xl font-bold mb-10">
+
+                    Dashboard
+
+                </h1>
+
+
+                <div className="grid md:grid-cols-3 gap-6">
+
+
+                    <div className="bg-slate-800 p-8 rounded-xl">
+
+                        <h2>Total Tasks</h2>
+
+                        <p className="text-5xl font-bold">
+
+                            {stats.tasks}
+
+                        </p>
+
+                    </div>
+
+
+
+                    <div className="bg-slate-800 p-8 rounded-xl">
+
+                        <h2>Completed Tasks</h2>
+
+                        <p className="text-5xl font-bold">
+
+                            {stats.completedTasks}
+
+                        </p>
+
+                    </div>
+
+
+
+
+                    <div className="bg-slate-800 p-8 rounded-xl">
+
+                        <h2>Progress</h2>
+
+                        <p className="text-5xl font-bold">
+
+                            {progress}%
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
 
         </div>
-      </motion.main>
-    </div>
-  );
+
+    );
+
 }
+
 
 export default Dashboard;
