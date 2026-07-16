@@ -1,47 +1,32 @@
-const admin = require("firebase-admin");
-const { cert } = require("firebase-admin/app");
+const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { getAuth } = require("firebase-admin/auth");
 
 require("dotenv").config();
 
 
-try {
 
+if (getApps().length === 0) {
 
-if (admin.apps.length === 0) {
+    initializeApp({
 
+        credential: cert({
 
-admin.initializeApp({
+            projectId: process.env.FIREBASE_PROJECT_ID,
 
-credential: cert({
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 
-projectId: process.env.FIREBASE_PROJECT_ID,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
 
-clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        })
 
-privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g,"\n")
-
-})
-
-});
-
+    });
 
 }
 
 
 
 console.log("Firebase Admin Connected Successfully");
-
-
-
-}
-
-catch(error){
-
-console.log("Firebase Error:",error.message);
-
-}
 
 
 
@@ -52,11 +37,6 @@ const auth = getAuth();
 
 
 module.exports = {
-
-admin,
-
-db,
-
-auth
-
+    db,
+    auth
 };
