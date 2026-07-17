@@ -1,51 +1,98 @@
-import { Link, useNavigate } from "react-router-dom";
-import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
-
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./pages/firebase";
 
 
-function Navbar(){
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Tasks from "./pages/Tasks";
+import Goals from "./pages/Goals";
+import Timer from "./pages/Timer";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 
-const navigate = useNavigate();
+
+function ProtectedRoute({children}){
 
 
-const [open,setOpen] = useState(false);
+const token = localStorage.getItem("token");
 
 
+if(!token){
+
+return <Navigate to="/login" />;
+
+}
 
 
-const logout = async()=>{
-
-
-try{
-
-
-await signOut(auth);
-
-
-localStorage.clear();
-
-
-navigate("/login");
+return children;
 
 
 }
 
 
-catch(error){
 
 
-console.log(error);
+
+function App(){
+
+
+const [loading,setLoading] = useState(true);
+
+
+
+useEffect(()=>{
+
+
+const unsubscribe = onAuthStateChanged(
+auth,
+(user)=>{
+
+
+setLoading(false);
+
+
+});
+
+
+return unsubscribe;
+
+
+},[]);
+
+
+
+
+
+if(loading){
+
+
+return(
+
+<div className="
+min-h-screen
+bg-[#020617]
+text-white
+flex
+items-center
+justify-center
+text-2xl
+">
+
+Loading StudySprint...
+
+</div>
+
+);
 
 
 }
 
-
-};
 
 
 
@@ -53,198 +100,103 @@ console.log(error);
 
 return(
 
-
-<nav className="
-fixed
-top-0
-left-0
-w-full
-z-50
-bg-[#020617]/90
-backdrop-blur
-border-b
-border-white/10
-">
+<BrowserRouter>
 
 
-<div className="
-max-w-7xl
-mx-auto
-px-6
-py-5
-flex
-justify-between
-items-center
-">
+<Routes>
+
+
+<Route path="/" element={<Home/>}/>
+
+
+<Route path="/login" element={<Login/>}/>
+
+
+<Route path="/register" element={<Register/>}/>
 
 
 
 
 
-<Link
-
-to="/"
-
-className="
-text-3xl
-font-black
-text-emerald-400
-"
-
->
-
-StudySprint
-
-</Link>
-
-
-
-
-
-<button
-
-className="
-md:hidden
-text-2xl
-"
-
-onClick={()=>setOpen(!open)}
-
->
-
-
-{
-open
-?
-<FiX/>
-:
-<FiMenu/>
+<Route
+path="/dashboard"
+element={
+<ProtectedRoute>
+<Dashboard/>
+</ProtectedRoute>
 }
+/>
 
 
-</button>
 
 
 
+<Route
+path="/tasks"
+element={
+<ProtectedRoute>
+<Tasks/>
+</ProtectedRoute>
+}
+/>
 
 
 
 
-<div className={`
 
-${open ? "flex":"hidden"}
+<Route
+path="/goals"
+element={
+<ProtectedRoute>
+<Goals/>
+</ProtectedRoute>
+}
+/>
 
-md:flex
 
-absolute
 
-md:static
 
-top-20
 
-left-0
+<Route
+path="/timer"
+element={
+<ProtectedRoute>
+<Timer/>
+</ProtectedRoute>
+}
+/>
 
-w-full
 
-md:w-auto
 
-bg-[#020617]
 
-md:bg-transparent
 
-flex-col
+<Route
+path="/profile"
+element={
+<ProtectedRoute>
+<Profile/>
+</ProtectedRoute>
+}
+/>
 
-md:flex-row
 
-gap-6
 
-p-6
 
-md:p-0
 
-items-center
+<Route
+path="/settings"
+element={
+<ProtectedRoute>
+<Settings/>
+</ProtectedRoute>
+}
+/>
 
-`}>
 
+</Routes>
 
 
-
-<Link to="/dashboard">
-
-Dashboard
-
-</Link>
-
-
-<Link to="/tasks">
-
-Tasks
-
-</Link>
-
-
-<Link to="/goals">
-
-Goals
-
-</Link>
-
-
-<Link to="/timer">
-
-Timer
-
-</Link>
-
-
-<Link to="/profile">
-
-Profile
-
-</Link>
-
-
-<Link to="/settings">
-
-Settings
-
-</Link>
-
-
-
-
-
-<button
-
-onClick={logout}
-
-className="
-flex
-items-center
-gap-2
-text-red-400
-"
-
->
-
-<FiLogOut/>
-
-Logout
-
-</button>
-
-
-
-
-
-</div>
-
-
-
-</div>
-
-
-</nav>
+</BrowserRouter>
 
 
 );
@@ -254,4 +206,4 @@ Logout
 
 
 
-export default Navbar;
+export default App;

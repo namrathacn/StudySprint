@@ -4,28 +4,49 @@ import {FiLogOut,FiMenu,FiX} from "react-icons/fi";
 
 import {useState} from "react";
 
+import { signOut } from "firebase/auth";
+
+import { auth } from "../pages/firebase";
+
 
 
 function Navbar(){
 
 
-const navigate=useNavigate();
+const navigate = useNavigate();
+
 
 const [open,setOpen]=useState(false);
 
 
 
 
+const logout = async()=>{
 
-const logout=()=>{
+
+try{
+
+
+await signOut(auth);
 
 
 localStorage.clear();
 
+
 navigate("/login");
 
 
+}
+
+catch(error){
+
+console.log(error);
+
+}
+
+
 };
+
 
 
 
@@ -55,7 +76,6 @@ flex
 justify-between
 items-center
 ">
-
 
 
 <Link
@@ -89,21 +109,15 @@ onClick={()=>setOpen(!open)}
 
 >
 
-
 {
 
 open
-
 ?
-
 <FiX/>
-
 :
-
 <FiMenu/>
 
 }
-
 
 </button>
 
@@ -111,11 +125,9 @@ open
 
 
 
-
-
 <div className={`
 
-${open ? "flex" : "hidden"}
+${open ? "flex":"hidden"}
 
 md:flex
 
@@ -152,46 +164,33 @@ items-center
 
 
 <Link to="/dashboard">
-
 Dashboard
-
 </Link>
 
 
 <Link to="/tasks">
-
 Tasks
-
 </Link>
 
 
 <Link to="/goals">
-
 Goals
-
 </Link>
 
 
 <Link to="/timer">
-
 Timer
-
 </Link>
 
 
 <Link to="/profile">
-
 Profile
-
 </Link>
 
 
 <Link to="/settings">
-
 Settings
-
 </Link>
-
 
 
 
@@ -209,27 +208,21 @@ text-red-400
 
 >
 
-
 <FiLogOut/>
 
 Logout
-
 
 </button>
 
 
 
-
-
 </div>
-
 
 
 </div>
 
 
 </nav>
-
 
 );
 
