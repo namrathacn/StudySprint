@@ -1,133 +1,250 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import { useState } from "react";
 
-import Home from "./pages/Home";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
-import Login from "./pages/Login";
 
-import Register from "./pages/Register";
 
-import Dashboard from "./pages/Dashboard";
+function Navbar(){
 
-import Tasks from "./pages/Tasks";
 
-import Goals from "./pages/Goals";
+const navigate = useNavigate();
 
-import Timer from "./pages/Timer";
 
-import Profile from "./pages/Profile";
-
-import Settings from "./pages/Settings";
+const [open,setOpen] = useState(false);
 
 
 
 
+const logout = async()=>{
 
-function App(){
+
+try{
+
+
+await signOut(auth);
+
+
+localStorage.clear();
+
+
+navigate("/login");
+
+
+}
+
+
+catch(error){
+
+
+console.log(error);
+
+
+}
+
+
+};
+
+
+
 
 
 return(
 
 
-<BrowserRouter>
+<nav className="
+fixed
+top-0
+left-0
+w-full
+z-50
+bg-[#020617]/90
+backdrop-blur
+border-b
+border-white/10
+">
 
 
-<Routes>
-
-
-<Route
-
-path="/"
-
-element={<Home />}
-
-/>
-
-
-
-<Route
-
-path="/login"
-
-element={<Login />}
-
-/>
-
-
-
-<Route
-
-path="/register"
-
-element={<Register />}
-
-/>
+<div className="
+max-w-7xl
+mx-auto
+px-6
+py-5
+flex
+justify-between
+items-center
+">
 
 
 
-<Route
-
-path="/dashboard"
-
-element={<Dashboard />}
-
-/>
 
 
+<Link
 
-<Route
+to="/"
 
-path="/tasks"
+className="
+text-3xl
+font-black
+text-emerald-400
+"
 
-element={<Tasks />}
+>
 
-/>
+StudySprint
 
-
-
-<Route
-
-path="/goals"
-
-element={<Goals />}
-
-/>
+</Link>
 
 
 
-<Route
-
-path="/timer"
-
-element={<Timer />}
-
-/>
 
 
+<button
 
-<Route
+className="
+md:hidden
+text-2xl
+"
 
-path="/profile"
+onClick={()=>setOpen(!open)}
 
-element={<Profile />}
-
-/>
+>
 
 
+{
+open
+?
+<FiX/>
+:
+<FiMenu/>
+}
 
-<Route
 
-path="/settings"
-
-element={<Settings />}
-
-/>
+</button>
 
 
 
-</Routes>
 
 
-</BrowserRouter>
+
+
+<div className={`
+
+${open ? "flex":"hidden"}
+
+md:flex
+
+absolute
+
+md:static
+
+top-20
+
+left-0
+
+w-full
+
+md:w-auto
+
+bg-[#020617]
+
+md:bg-transparent
+
+flex-col
+
+md:flex-row
+
+gap-6
+
+p-6
+
+md:p-0
+
+items-center
+
+`}>
+
+
+
+
+<Link to="/dashboard">
+
+Dashboard
+
+</Link>
+
+
+<Link to="/tasks">
+
+Tasks
+
+</Link>
+
+
+<Link to="/goals">
+
+Goals
+
+</Link>
+
+
+<Link to="/timer">
+
+Timer
+
+</Link>
+
+
+<Link to="/profile">
+
+Profile
+
+</Link>
+
+
+<Link to="/settings">
+
+Settings
+
+</Link>
+
+
+
+
+
+<button
+
+onClick={logout}
+
+className="
+flex
+items-center
+gap-2
+text-red-400
+"
+
+>
+
+<FiLogOut/>
+
+Logout
+
+</button>
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+</nav>
 
 
 );
@@ -136,4 +253,5 @@ element={<Settings />}
 }
 
 
-export default App;
+
+export default Navbar;
