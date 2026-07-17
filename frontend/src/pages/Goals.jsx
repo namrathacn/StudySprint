@@ -1,381 +1,262 @@
-import {useEffect,useState} from "react";
-
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { apiRequest } from "../services/api";
 
-import {apiRequest} from "../services/api";
 
+function Goals() {
 
+  const [goals,setGoals] = useState([]);
+  const [title,setTitle] = useState("");
 
-function Goals(){
 
+  useEffect(()=>{
+    loadGoals();
+  },[]);
 
-const [goals,setGoals]=useState([]);
 
-const [title,setTitle]=useState("");
 
+  const loadGoals = async()=>{
 
+    try{
 
+      const data = await apiRequest("/goals");
 
+      setGoals(data);
 
+    }
+    catch(error){
 
+      console.log(error);
 
-useEffect(()=>{
+    }
 
+  };
 
-loadGoals();
 
 
-},[]);
+  const addGoal = async()=>{
 
+    if(!title.trim()) return;
 
 
+    try{
 
+      await apiRequest("/goals","POST",{
 
+        title:title,
 
-const loadGoals=async()=>{
+        completed:false
 
+      });
 
-try{
 
+      setTitle("");
 
-const data=await apiRequest("/goals");
+      loadGoals();
 
 
-setGoals(data);
+    }
+    catch(error){
 
+      console.log(error);
 
-}
+    }
 
-catch(error){
+  };
 
-console.log(error);
 
-}
 
+  const completeGoal = async(id,completed)=>{
 
-};
+    try{
 
+      await apiRequest(`/goals/${id}`,"PUT",{
 
+        completed:!completed
 
+      });
 
 
+      loadGoals();
 
+    }
+    catch(error){
 
-const addGoal=async()=>{
+      console.log(error);
 
+    }
 
-if(!title.trim()) return;
+  };
 
 
 
+  return(
 
-try{
+    <div className="min-h-screen bg-[#020617] text-white">
 
 
-await apiRequest("/goals",{
+      <Navbar />
 
-method:"POST",
 
-body:JSON.stringify({
+      <div className="pt-32 px-6 pb-20 max-w-5xl mx-auto">
 
-title:title,
 
-completed:false
+        <h1 className="text-5xl font-black mb-10">
+          Goals
+        </h1>
 
-})
 
-});
 
 
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-8">
 
-setTitle("");
 
+          <div className="flex gap-4">
 
-loadGoals();
 
+            <input
 
-}
+              value={title}
 
-catch(error){
+              onChange={(e)=>setTitle(e.target.value)}
 
-console.log(error);
+              onKeyDown={(e)=>{
 
-}
+                if(e.key==="Enter"){
 
+                  addGoal();
 
-};
+                }
 
+              }}
 
+              placeholder="Create new goal"
 
+              className="flex-1 bg-white/10 p-4 rounded-xl outline-none"
 
+            />
 
 
 
-const completeGoal=async(id,completed)=>{
+            <button
 
+              onClick={addGoal}
 
-try{
+              className="bg-emerald-500 hover:bg-emerald-400 text-black px-6 rounded-xl font-bold"
 
+            >
 
-await apiRequest(`/goals/${id}`,{
+              Add
 
-method:"PUT",
+            </button>
 
-body:JSON.stringify({
 
-completed:!completed
 
-})
+          </div>
 
-});
 
+        </div>
 
 
-loadGoals();
 
 
-}
+        <div className="space-y-5">
 
-catch(error){
 
-console.log(error);
+          {
+            goals.length===0 && (
 
-}
+              <div className="text-slate-400 text-xl">
 
+                No goals yet. Create your first goal.
 
-};
+              </div>
 
+            )
+          }
 
 
 
 
 
+          {
+            goals.map((goal)=>(
 
-return(
 
-<div className="
-min-h-screen
-bg-[#020617]
-text-white
-">
+              <div
 
+                key={goal.id}
 
-<Navbar />
+                className="bg-white/5 border border-white/10 rounded-3xl p-6 flex justify-between items-center"
 
+              >
 
 
-<div className="
-pt-32
-px-6
-pb-20
-max-w-5xl
-mx-auto
-">
+                <h2
 
+                  className={`text-2xl font-bold ${
+                    goal.completed
+                    ? "line-through text-slate-500"
+                    : ""
+                  }`}
 
+                >
 
-<h1 className="
-text-5xl
-font-black
-mb-10
-">
+                  {goal.title}
 
-Goals
+                </h2>
 
-</h1>
 
 
 
+                <button
 
+                  onClick={()=>
+                    completeGoal(
+                      goal.id,
+                      goal.completed
+                    )
+                  }
 
 
+                  className={`px-5 py-2 rounded-xl font-bold transition ${
+                    goal.completed
+                    ? "bg-red-500 hover:bg-red-400 text-white"
+                    : "bg-emerald-500 hover:bg-emerald-400 text-black"
+                  }`}
 
-<div className="
-bg-white/5
-border
-border-white/10
-rounded-3xl
-p-8
-mb-8
-">
+                >
 
+                  {
+                    goal.completed
+                    ? "Undo"
+                    : "Finish"
+                  }
 
 
-<div className="
-flex
-gap-4
-">
+                </button>
 
 
-<input
 
-value={title}
+              </div>
 
-onChange={(e)=>setTitle(e.target.value)}
 
-placeholder="Create new goal"
+            ))
+          }
 
-className="
-flex-1
-bg-white/10
-p-4
-rounded-xl
-"
 
-/>
 
+        </div>
 
 
 
-<button
+      </div>
 
-onClick={addGoal}
 
-className="
-bg-emerald-500
-text-black
-px-6
-rounded-xl
-font-bold
-"
 
->
+    </div>
 
-Add
-
-</button>
-
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-<div className="
-space-y-5
-">
-
-
-
-{
-
-goals.map((goal)=>(
-
-
-<div
-
-key={goal.id}
-
-className="
-bg-white/5
-border
-border-white/10
-rounded-3xl
-p-6
-flex
-justify-between
-items-center
-"
-
->
-
-
-
-<div>
-
-
-<h2 className={`
-text-2xl
-font-bold
-
-${goal.completed ? "line-through text-slate-500":""}
-
-`}>
-
-{goal.title}
-
-</h2>
-
-
-</div>
-
-
-
-
-
-<button
-
-onClick={()=>completeGoal(
-
-goal.id,
-
-goal.completed
-
-)}
-
-className="
-bg-emerald-500
-text-black
-px-5
-py-2
-rounded-xl
-font-bold
-"
-
->
-
-
-{
-
-goal.completed
-
-?
-
-"Completed"
-
-:
-
-"Finish"
-
-}
-
-
-</button>
-
-
-
-</div>
-
-
-))
-
-
-}
-
-
-
-</div>
-
-
-
-
-
-</div>
-
-
-</div>
-
-
-);
-
+  );
 
 }
 
