@@ -1,10 +1,10 @@
-const express=require("express");
+const express = require("express");
 
-const router=express.Router();
+const router = express.Router();
 
-const {db}=require("../config/firebase");
+const { db } = require("../config/firebase");
 
-const verifyToken=require("../middleware/authMiddleware");
+const verifyToken = require("../middleware/authMiddleware");
 
 
 router.use(verifyToken);
@@ -13,18 +13,17 @@ router.use(verifyToken);
 
 
 
-router.get("/",async(req,res)=>{
+// GET GOALS
+
+router.get("/", async(req,res)=>{
 
 
 try{
 
 
-const snapshot=await db
-
+const snapshot = await db
 .collection("goals")
-
 .where("uid","==",req.user.uid)
-
 .get();
 
 
@@ -68,7 +67,6 @@ message:error.message
 }
 
 
-
 });
 
 
@@ -77,7 +75,9 @@ message:error.message
 
 
 
-router.post("/",async(req,res)=>{
+// ADD GOAL
+
+router.post("/", async(req,res)=>{
 
 
 try{
@@ -98,10 +98,8 @@ createdAt:new Date()
 
 
 
-const doc=await db
-
+const doc = await db
 .collection("goals")
-
 .add(goal);
 
 
@@ -116,7 +114,6 @@ id:doc.id,
 });
 
 
-
 }
 
 catch(error){
@@ -140,19 +137,61 @@ message:error.message
 
 
 
-router.put("/:id",async(req,res)=>{
+
+
+// UPDATE GOAL
+
+router.put("/:id", async(req,res)=>{
 
 
 try{
 
 
-await db
-
+const docRef = db
 .collection("goals")
+.doc(req.params.id);
 
-.doc(req.params.id)
 
-.update(req.body);
+
+const doc = await docRef.get();
+
+
+
+if(!doc.exists){
+
+
+return res.status(404).json({
+
+message:"Goal not found"
+
+});
+
+
+}
+
+
+
+
+if(doc.data().uid !== req.user.uid){
+
+
+return res.status(403).json({
+
+message:"Unauthorized"
+
+});
+
+
+}
+
+
+
+
+
+
+
+await docRef.update(req.body);
+
 
 
 
@@ -163,6 +202,7 @@ message:"Goal updated"
 });
 
 
+
 }
 
 catch(error){
@@ -178,6 +218,93 @@ message:error.message
 }
 
 
+});
+
+
+
+
+
+
+
+
+
+// DELETE GOAL
+
+router.delete("/:id", async(req,res)=>{
+
+
+try{
+
+
+const docRef = db
+.collection("goals")
+.doc(req.params.id);
+
+
+
+const doc = await docRef.get();
+
+
+
+
+if(!doc.exists){
+
+
+return res.status(404).json({
+
+message:"Goal not found"
+
+});
+
+
+}
+
+
+
+
+if(doc.data().uid !== req.user.uid){
+
+
+return res.status(403).json({
+
+message:"Unauthorized"
+
+});
+
+
+}
+
+
+
+
+
+await docRef.delete();
+
+
+
+
+res.json({
+
+message:"Deleted"
+
+});
+
+
+
+}
+
+catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 });
 
@@ -186,4 +313,5 @@ message:error.message
 
 
 
-module.exports=router;
+
+module.exports = router;
