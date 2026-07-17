@@ -1,41 +1,47 @@
-import {useState} from "react";
+import { useState } from "react";
 
-import {signInWithEmailAndPassword} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-import {auth} from "../firebase";
+import { auth } from "../firebase";
 
-import {useNavigate} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 
 function Login(){
 
 
-const navigate=useNavigate();
+const navigate = useNavigate();
 
 
-const [email,setEmail]=useState("");
+const [email,setEmail] = useState("");
 
-const [password,setPassword]=useState("");
+const [password,setPassword] = useState("");
 
-const [error,setError]=useState("");
+const [error,setError] = useState("");
 
-
-
-
+const [loading,setLoading] = useState(false);
 
 
 
-const login=async(e)=>{
+
+
+const login = async(e)=>{
 
 
 e.preventDefault();
 
 
+setError("");
+
+setLoading(true);
+
+
+
 try{
 
 
-const result=await signInWithEmailAndPassword(
+const result = await signInWithEmailAndPassword(
 
 auth,
 
@@ -47,29 +53,21 @@ password
 
 
 
-
-const token=await result.user.getIdToken();
+const token = await result.user.getIdToken();
 
 
 
 
 
 localStorage.setItem(
-
 "token",
-
 token
-
 );
 
 
 
-
-
 localStorage.setItem(
-
 "user",
-
 JSON.stringify({
 
 email:result.user.email,
@@ -77,9 +75,7 @@ email:result.user.email,
 uid:result.user.uid
 
 })
-
 );
-
 
 
 
@@ -93,9 +89,20 @@ navigate("/dashboard");
 catch(err){
 
 
-console.log(err.code);
+console.log(err);
 
-setError(err.message);
+
+setError(
+"Invalid email or password"
+);
+
+
+}
+
+finally{
+
+
+setLoading(false);
 
 
 }
@@ -109,8 +116,8 @@ setError(err.message);
 
 
 
-
 return(
+
 
 <div className="
 min-h-screen
@@ -121,6 +128,7 @@ items-center
 justify-center
 px-6
 ">
+
 
 
 <form
@@ -137,8 +145,8 @@ w-full
 max-w-md
 "
 
-
 >
+
 
 
 <h1 className="
@@ -153,7 +161,11 @@ Login
 
 
 
+
+
 <input
+
+type="email"
 
 placeholder="Email"
 
@@ -167,9 +179,11 @@ p-4
 rounded-xl
 bg-white/10
 mb-4
+outline-none
 "
 
 />
+
 
 
 
@@ -190,6 +204,7 @@ p-4
 rounded-xl
 bg-white/10
 mb-4
+outline-none
 "
 
 />
@@ -197,10 +212,14 @@ mb-4
 
 
 
+
 {
 error &&
 
-<p className="text-red-400 mb-4">
+<p className="
+text-red-400
+mb-4
+">
 
 {error}
 
@@ -211,7 +230,10 @@ error &&
 
 
 
+
 <button
+
+disabled={loading}
 
 className="
 w-full
@@ -224,9 +246,50 @@ font-bold
 
 >
 
-Login
+
+{
+loading
+?
+"Logging in..."
+:
+"Login"
+}
+
 
 </button>
+
+
+
+
+
+<p className="
+mt-6
+text-center
+text-slate-400
+">
+
+Don't have an account?
+
+<Link
+
+to="/register"
+
+className="
+text-emerald-400
+ml-2
+"
+
+>
+
+Register
+
+</Link>
+
+
+</p>
+
+
+
 
 
 
@@ -240,6 +303,7 @@ Login
 
 
 }
+
 
 
 export default Login;

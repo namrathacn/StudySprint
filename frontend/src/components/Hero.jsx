@@ -1,31 +1,74 @@
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
+
+
+
 function Hero(){
+
+
+const [user,setUser] = useState(null);
+
+
+
+useEffect(()=>{
+
+
+const unsubscribe = onAuthStateChanged(
+
+auth,
+
+(currentUser)=>{
+
+
+setUser(currentUser);
+
+
+}
+
+);
+
+
+
+return unsubscribe;
+
+
+},[]);
+
+
+
+
+
+
 
 return(
 
+
 <section className="
-min-h-screen
-flex
-items-center
+pt-40
 px-6
-pt-32
+pb-20
 ">
+
+
+
 
 
 <div className="
-max-w-7xl
+max-w-6xl
 mx-auto
-grid
-md:grid-cols-2
-gap-10
-items-center
+text-center
 ">
 
 
-<div>
+
 
 
 <h1 className="
 text-6xl
+md:text-7xl
 font-black
 leading-tight
 ">
@@ -34,36 +77,99 @@ Study Smarter.
 
 <br/>
 
+<span className="
+text-emerald-400
+">
+
 Achieve More.
+
+</span>
+
 
 </h1>
 
 
 
+
+
+
+
 <p className="
-mt-6
-text-xl
 text-slate-400
-max-w-xl
+text-xl
+mt-8
+max-w-3xl
+mx-auto
 ">
 
-StudySprint helps you manage tasks, track goals and improve your study productivity.
+StudySprint helps you manage tasks, track goals and improve
+your study productivity.
 
 </p>
 
 
 
 
+
+
+
+
+
+{
+
+user ? (
+
+
 <div className="
-mt-8
+mt-10
 flex
+justify-center
 gap-5
 ">
 
 
-<a
+<Link
 
-href="/register"
+to="/dashboard"
+
+className="
+bg-emerald-500
+text-black
+px-8
+py-4
+rounded-xl
+font-bold
+"
+
+>
+
+Dashboard
+
+</Link>
+
+
+</div>
+
+
+)
+
+
+:
+
+(
+
+
+<div className="
+mt-10
+flex
+justify-center
+gap-5
+">
+
+
+<Link
+
+to="/register"
 
 className="
 bg-emerald-500
@@ -78,13 +184,14 @@ font-bold
 
 Get Started
 
-</a>
+</Link>
 
 
 
-<a
 
-href="/dashboard"
+<Link
+
+to="/login"
 
 className="
 border
@@ -97,72 +204,22 @@ font-bold
 
 >
 
-Dashboard
+Login
 
-</a>
+</Link>
+
 
 
 </div>
 
 
-</div>
+)
+
+
+}
 
 
 
-
-
-<div className="
-bg-white/5
-border
-border-white/10
-rounded-3xl
-p-10
-">
-
-
-<h2 className="
-text-4xl
-font-black
-">
-
-Your Progress
-
-</h2>
-
-
-<p className="
-mt-5
-text-slate-400
-">
-
-Complete tasks, achieve goals and build better study habits.
-
-</p>
-
-
-
-<div className="
-mt-8
-h-4
-bg-slate-800
-rounded-full
-">
-
-
-<div className="
-h-full
-w-3/4
-bg-emerald-500
-rounded-full
-">
-
-</div>
-
-
-</div>
-
-
-</div>
 
 
 
@@ -177,6 +234,7 @@ rounded-full
 
 
 }
+
 
 
 export default Hero;

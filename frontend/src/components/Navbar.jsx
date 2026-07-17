@@ -1,12 +1,12 @@
-import {Link,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import {FiLogOut,FiMenu,FiX} from "react-icons/fi";
+import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
 
-import {useState} from "react";
+import { useEffect, useState } from "react";
 
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-import { auth } from "../pages/firebase";
+import { auth } from "../firebase";
 
 
 
@@ -16,7 +16,43 @@ function Navbar(){
 const navigate = useNavigate();
 
 
-const [open,setOpen]=useState(false);
+const [open,setOpen] = useState(false);
+
+
+const [user,setUser] = useState(null);
+
+
+
+
+
+
+useEffect(()=>{
+
+
+const unsubscribe = onAuthStateChanged(
+
+auth,
+
+(currentUser)=>{
+
+
+setUser(currentUser);
+
+
+}
+
+);
+
+
+
+return unsubscribe;
+
+
+},[]);
+
+
+
+
 
 
 
@@ -30,7 +66,9 @@ try{
 await signOut(auth);
 
 
-localStorage.clear();
+localStorage.removeItem("token");
+
+localStorage.removeItem("user");
 
 
 navigate("/login");
@@ -40,7 +78,9 @@ navigate("/login");
 
 catch(error){
 
+
 console.log(error);
+
 
 }
 
@@ -52,7 +92,11 @@ console.log(error);
 
 
 
+
+
+
 return(
+
 
 <nav className="
 fixed
@@ -67,6 +111,9 @@ border-white/10
 ">
 
 
+
+
+
 <div className="
 max-w-7xl
 mx-auto
@@ -76,6 +123,9 @@ flex
 justify-between
 items-center
 ">
+
+
+
 
 
 <Link
@@ -98,6 +148,8 @@ StudySprint
 
 
 
+
+
 <button
 
 className="
@@ -112,12 +164,17 @@ onClick={()=>setOpen(!open)}
 {
 
 open
+
 ?
+
 <FiX/>
+
 :
+
 <FiMenu/>
 
 }
+
 
 </button>
 
@@ -125,9 +182,12 @@ open
 
 
 
+
+
+
 <div className={`
 
-${open ? "flex":"hidden"}
+${open ? "flex" : "hidden"}
 
 md:flex
 
@@ -163,34 +223,81 @@ items-center
 
 
 
-<Link to="/dashboard">
-Dashboard
+
+
+
+
+
+
+<Link to="/">
+
+Home
+
 </Link>
+
+
+
+
+
+
+
+
+
+{
+
+user ? (
+
+<>
+
+
+<Link to="/dashboard">
+
+Dashboard
+
+</Link>
+
 
 
 <Link to="/tasks">
+
 Tasks
+
 </Link>
+
 
 
 <Link to="/goals">
+
 Goals
+
 </Link>
+
 
 
 <Link to="/timer">
+
 Timer
+
 </Link>
+
 
 
 <Link to="/profile">
+
 Profile
+
 </Link>
+
 
 
 <Link to="/settings">
+
 Settings
+
 </Link>
+
+
+
 
 
 
@@ -215,8 +322,68 @@ Logout
 </button>
 
 
+</>
+
+
+)
+
+:
+
+(
+
+
+<>
+
+
+<Link to="/login">
+
+Login
+
+</Link>
+
+
+
+<Link
+
+to="/register"
+
+className="
+bg-emerald-500
+text-black
+px-5
+py-2
+rounded-xl
+font-bold
+"
+
+>
+
+Register
+
+</Link>
+
+
+</>
+
+
+)
+
+
+}
+
+
+
+
+
+
 
 </div>
+
+
+
+
+
+
 
 
 </div>
@@ -224,10 +391,12 @@ Logout
 
 </nav>
 
+
 );
 
 
 }
+
 
 
 export default Navbar;

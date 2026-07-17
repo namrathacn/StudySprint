@@ -1,16 +1,23 @@
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 
 import {
-FiSettings,
-FiBell,
-FiLock,
-FiLogOut,
-FiTrash2
+  FiSettings,
+  FiBell,
+  FiLock,
+  FiLogOut,
+  FiTrash2
 } from "react-icons/fi";
 
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { auth } from "../firebase";
+
+import { 
+  signOut,
+  deleteUser
+} from "firebase/auth";
 
 
 
@@ -22,17 +29,13 @@ const navigate = useNavigate();
 
 
 const [theme,setTheme] = useState(
-
-localStorage.getItem("theme") || "dark"
-
+  localStorage.getItem("theme") || "dark"
 );
 
 
 
 const [notifications,setNotifications] = useState(
-
-localStorage.getItem("notifications")==="true"
-
+  localStorage.getItem("notifications")==="true"
 );
 
 
@@ -55,15 +58,10 @@ document.body.classList.remove("light-theme");
 }
 
 
-
 localStorage.setItem(
-
 "theme",
-
 theme
-
 );
-
 
 
 },[theme]);
@@ -84,11 +82,8 @@ setNotifications(value);
 
 
 localStorage.setItem(
-
 "notifications",
-
 value
-
 );
 
 
@@ -99,7 +94,15 @@ value
 
 
 
-const logout=()=>{
+
+
+const logout = async()=>{
+
+
+try{
+
+
+await signOut(auth);
 
 
 localStorage.clear();
@@ -108,7 +111,85 @@ localStorage.clear();
 navigate("/login");
 
 
+}
+
+catch(error){
+
+console.log(error);
+
+}
+
+
 };
+
+
+
+
+
+
+
+
+
+const deleteAccount = async()=>{
+
+
+const confirmDelete = window.confirm(
+
+"Are you sure you want to delete your account permanently?"
+
+);
+
+
+
+if(!confirmDelete) return;
+
+
+
+
+
+try{
+
+
+const user = auth.currentUser;
+
+
+
+if(user){
+
+
+await deleteUser(user);
+
+
+}
+
+
+
+localStorage.clear();
+
+
+
+navigate("/register");
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+alert(
+"Please login again before deleting your account."
+);
+
+
+}
+
+
+};
+
 
 
 
@@ -162,9 +243,6 @@ space-y-6
 
 
 
-
-{/* Appearance */}
-
 <div className="
 bg-white/5
 border
@@ -188,17 +266,13 @@ p-4
 rounded-2xl
 ">
 
-
 <FiSettings size={30}/>
-
 
 </div>
 
 
 
-
 <div>
-
 
 <h2 className="
 text-2xl
@@ -229,21 +303,14 @@ Change your StudySprint theme
 
 
 
-
 <button
 
 onClick={()=>setTheme(
-
 theme==="dark"
-
 ?
-
 "light"
-
 :
-
 "dark"
-
 )}
 
 className="
@@ -258,24 +325,15 @@ font-bold
 
 >
 
-
 {
-
 theme==="dark"
-
 ?
-
 "☀ Light Mode"
-
 :
-
 "🌙 Dark Mode"
-
 }
 
-
 </button>
-
 
 
 </div>
@@ -286,9 +344,6 @@ theme==="dark"
 
 
 
-
-
-{/* Notifications */}
 
 
 <div className="
@@ -315,7 +370,6 @@ gap-5
 ">
 
 
-
 <div className="
 bg-emerald-500
 text-black
@@ -323,18 +377,14 @@ p-4
 rounded-2xl
 ">
 
-
 <FiBell size={30}/>
-
 
 </div>
 
 
 
 
-
 <div>
-
 
 <h2 className="
 text-2xl
@@ -344,7 +394,6 @@ font-bold
 Notifications
 
 </h2>
-
 
 
 <p className="
@@ -357,9 +406,7 @@ Timer completion reminders
 </p>
 
 
-
 </div>
-
 
 
 </div>
@@ -374,6 +421,7 @@ Timer completion reminders
 onClick={changeNotifications}
 
 className={`
+
 px-6
 py-3
 rounded-xl
@@ -396,21 +444,15 @@ notifications
 
 >
 
-
 {
 
 notifications
-
 ?
-
 "ON"
-
 :
-
 "OFF"
 
 }
-
 
 </button>
 
@@ -419,7 +461,6 @@ notifications
 </div>
 
 
-
 </div>
 
 
@@ -427,11 +468,6 @@ notifications
 
 
 
-
-
-
-
-{/* Privacy */}
 
 
 
@@ -444,12 +480,12 @@ p-8
 ">
 
 
+
 <div className="
 flex
 items-center
 gap-5
 ">
-
 
 
 <div className="
@@ -459,13 +495,9 @@ p-4
 rounded-2xl
 ">
 
-
 <FiLock size={30}/>
 
-
 </div>
-
-
 
 
 
@@ -495,8 +527,6 @@ Manage your account security
 </div>
 
 
-
-
 </div>
 
 
@@ -511,6 +541,8 @@ flex
 gap-4
 flex-wrap
 ">
+
+
 
 
 
@@ -547,6 +579,8 @@ Logout
 
 <button
 
+onClick={deleteAccount}
+
 className="
 bg-red-900
 px-6
@@ -567,6 +601,7 @@ Delete Account
 
 
 </button>
+
 
 
 
@@ -598,6 +633,7 @@ Delete Account
 
 
 }
+
 
 
 export default Settings;

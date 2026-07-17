@@ -13,16 +13,15 @@ import {
 import { apiRequest } from "../services/api";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
+
+import { auth } from "../firebase";
 
 
 
 function Profile(){
 
 
-
 const [user,setUser] = useState(null);
-
 
 
 const [stats,setStats] = useState({
@@ -44,19 +43,23 @@ const [stats,setStats] = useState({
 
 
 
-
 useEffect(()=>{
 
 
 const unsubscribe = onAuthStateChanged(
+
 auth,
+
 (currentUser)=>{
 
 
 setUser(currentUser);
 
 
-});
+}
+
+);
+
 
 
 loadStats();
@@ -67,8 +70,6 @@ return unsubscribe;
 
 
 },[]);
-
-
 
 
 
@@ -92,13 +93,14 @@ setStats(data);
 
 catch(error){
 
+
 console.log(error);
+
 
 }
 
 
 };
-
 
 
 
@@ -156,7 +158,6 @@ mx-auto
 
 
 
-
 <div className="
 bg-white/5
 border
@@ -195,8 +196,6 @@ text-black
 
 
 </div>
-
-
 
 
 
@@ -282,7 +281,6 @@ mt-10
 
 
 
-
 <div className="
 bg-white/5
 border
@@ -302,15 +300,14 @@ text-4xl
 
 
 
+
 <h2 className="
 text-4xl
 font-black
 mt-5
 ">
 
-
 {stats.sessions || 0}
-
 
 </h2>
 
@@ -348,7 +345,6 @@ text-center
 ">
 
 
-
 <FiBookOpen className="
 mx-auto
 text-emerald-400
@@ -365,9 +361,7 @@ font-black
 mt-5
 ">
 
-
 {stats.completedTasks || 0}
-
 
 </h2>
 
@@ -405,7 +399,6 @@ text-center
 ">
 
 
-
 <FiTarget className="
 mx-auto
 text-emerald-400
@@ -422,9 +415,7 @@ font-black
 mt-5
 ">
 
-
 {stats.completedGoals || 0}
-
 
 </h2>
 
@@ -449,9 +440,8 @@ Goals Completed
 
 
 
+
 </div>
-
-
 
 
 

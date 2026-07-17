@@ -1,38 +1,51 @@
-import {useState} from "react";
+import { useState } from "react";
 
-import {createUserWithEmailAndPassword} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-import {auth} from "../firebase";
+import { auth } from "../firebase";
 
-import {useNavigate} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 
 function Register(){
 
 
-const navigate=useNavigate();
+
+const navigate = useNavigate();
 
 
-const [email,setEmail]=useState("");
+const [email,setEmail] = useState("");
 
-const [password,setPassword]=useState("");
+const [password,setPassword] = useState("");
+
+const [error,setError] = useState("");
+
+const [loading,setLoading] = useState(false);
 
 
 
 
 
-const register=async(e)=>{
+
+
+const register = async(e)=>{
 
 
 e.preventDefault();
+
+
+setError("");
+
+setLoading(true);
+
 
 
 
 try{
 
 
-const result=await createUserWithEmailAndPassword(
+const result = await createUserWithEmailAndPassword(
 
 auth,
 
@@ -45,7 +58,10 @@ password
 
 
 
-const token=await result.user.getIdToken();
+
+const token = await result.user.getIdToken();
+
+
 
 
 
@@ -56,6 +72,7 @@ localStorage.setItem(
 token
 
 );
+
 
 
 
@@ -75,15 +92,45 @@ uid:result.user.uid
 
 
 
+
+
 navigate("/dashboard");
+
 
 
 }
 
-catch(error){
+catch(err){
 
 
-console.log(error);
+console.log(err);
+
+
+if(err.code==="auth/email-already-in-use"){
+
+setError("Email already registered");
+
+}
+
+else if(err.code==="auth/weak-password"){
+
+setError("Password must be at least 6 characters");
+
+}
+
+else{
+
+setError("Registration failed");
+
+}
+
+
+}
+
+finally{
+
+
+setLoading(false);
 
 
 }
@@ -96,7 +143,9 @@ console.log(error);
 
 
 
+
 return(
+
 
 <div className="
 min-h-screen
@@ -107,6 +156,7 @@ items-center
 justify-center
 px-6
 ">
+
 
 
 <form
@@ -123,8 +173,8 @@ w-full
 max-w-md
 "
 
-
 >
+
 
 
 <h1 className="
@@ -139,7 +189,11 @@ Create Account
 
 
 
+
+
 <input
+
+type="email"
 
 placeholder="Email"
 
@@ -153,9 +207,12 @@ p-4
 rounded-xl
 bg-white/10
 mb-4
+outline-none
 "
 
 />
+
+
 
 
 
@@ -174,7 +231,8 @@ w-full
 p-4
 rounded-xl
 bg-white/10
-mb-6
+mb-4
+outline-none
 "
 
 />
@@ -182,7 +240,30 @@ mb-6
 
 
 
+
+{
+error &&
+
+<p className="
+text-red-400
+mb-4
+">
+
+{error}
+
+</p>
+
+}
+
+
+
+
+
+
+
 <button
+
+disabled={loading}
 
 className="
 w-full
@@ -195,9 +276,51 @@ font-bold
 
 >
 
-Register
+
+{
+loading
+?
+"Creating..."
+:
+"Register"
+}
+
 
 </button>
+
+
+
+
+
+<p className="
+mt-6
+text-center
+text-slate-400
+">
+
+Already have account?
+
+<Link
+
+to="/login"
+
+className="
+text-emerald-400
+ml-2
+"
+
+>
+
+Login
+
+</Link>
+
+
+</p>
+
+
+
+
 
 
 </form>
@@ -210,6 +333,7 @@ Register
 
 
 }
+
 
 
 export default Register;

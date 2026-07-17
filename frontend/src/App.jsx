@@ -2,12 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./pages/firebase";
+import { auth } from "./firebase";
 
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Goals from "./pages/Goals";
@@ -17,78 +18,19 @@ import Settings from "./pages/Settings";
 
 
 
-function ProtectedRoute({children}){
 
 
-const token = localStorage.getItem("token");
+function ProtectedRoute({ user, children }) {
 
 
-if(!token){
+  if (!user) {
 
-return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
 
-}
-
-
-return children;
+  }
 
 
-}
-
-
-
-
-
-function App(){
-
-
-const [loading,setLoading] = useState(true);
-
-
-
-useEffect(()=>{
-
-
-const unsubscribe = onAuthStateChanged(
-auth,
-(user)=>{
-
-
-setLoading(false);
-
-
-});
-
-
-return unsubscribe;
-
-
-},[]);
-
-
-
-
-
-if(loading){
-
-
-return(
-
-<div className="
-min-h-screen
-bg-[#020617]
-text-white
-flex
-items-center
-justify-center
-text-2xl
-">
-
-Loading StudySprint...
-
-</div>
-
-);
+  return children;
 
 
 }
@@ -98,108 +40,217 @@ Loading StudySprint...
 
 
 
-return(
 
-<BrowserRouter>
-
-
-<Routes>
+function App() {
 
 
-<Route path="/" element={<Home/>}/>
+  const [user, setUser] = useState(null);
 
-
-<Route path="/login" element={<Login/>}/>
-
-
-<Route path="/register" element={<Register/>}/>
+  const [loading, setLoading] = useState(true);
 
 
 
 
 
-<Route
-path="/dashboard"
-element={
-<ProtectedRoute>
-<Dashboard/>
-</ProtectedRoute>
-}
-/>
+
+
+  useEffect(() => {
+
+
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (currentUser) => {
+
+
+        setUser(currentUser);
+
+        setLoading(false);
+
+
+      }
+    );
+
+
+
+    return unsubscribe;
+
+
+  }, []);
 
 
 
 
 
-<Route
-path="/tasks"
-element={
-<ProtectedRoute>
-<Tasks/>
-</ProtectedRoute>
-}
-/>
+
+
+
+  if (loading) {
+
+
+    return (
+
+      <div className="
+      min-h-screen
+      bg-[#020617]
+      text-white
+      flex
+      items-center
+      justify-center
+      text-2xl
+      ">
+
+        Loading...
+
+      </div>
+
+    );
+
+
+  }
 
 
 
 
 
-<Route
-path="/goals"
-element={
-<ProtectedRoute>
-<Goals/>
-</ProtectedRoute>
-}
-/>
+
+
+
+
+  return (
+
+
+    <BrowserRouter>
+
+
+      <Routes>
+
+
+
+        <Route 
+          path="/" 
+          element={<Home />} 
+        />
+
+
+
+        <Route 
+          path="/login" 
+          element={<Login />} 
+        />
+
+
+
+        <Route 
+          path="/register" 
+          element={<Register />} 
+        />
 
 
 
 
 
-<Route
-path="/timer"
-element={
-<ProtectedRoute>
-<Timer/>
-</ProtectedRoute>
-}
-/>
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute user={user}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
 
 
 
 
-<Route
-path="/profile"
-element={
-<ProtectedRoute>
-<Profile/>
-</ProtectedRoute>
-}
-/>
+
+        <Route
+          path="/tasks"
+          element={
+            <ProtectedRoute user={user}>
+              <Tasks />
+            </ProtectedRoute>
+          }
+        />
 
 
 
 
 
-<Route
-path="/settings"
-element={
-<ProtectedRoute>
-<Settings/>
-</ProtectedRoute>
-}
-/>
+
+        <Route
+          path="/goals"
+          element={
+            <ProtectedRoute user={user}>
+              <Goals />
+            </ProtectedRoute>
+          }
+        />
 
 
-</Routes>
 
 
-</BrowserRouter>
 
 
-);
+
+        <Route
+          path="/timer"
+          element={
+            <ProtectedRoute user={user}>
+              <Timer />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+
+
+
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute user={user}>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+
+
+
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute user={user}>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+
+
+        <Route
+          path="*"
+          element={<Navigate to="/" />}
+        />
+
+
+
+
+      </Routes>
+
+
+    </BrowserRouter>
+
+
+  );
 
 
 }
