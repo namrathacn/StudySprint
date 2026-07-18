@@ -1,12 +1,12 @@
-# StudySprint 🚀
+# StudySprint
 
 StudySprint is a full-stack student productivity application designed to help students manage tasks, goals, and focused study sessions.
 
-## 🌐 Live Demo
+## Live Demo
 
-**Live Website:** https://study-sprint-rosy.vercel.app
+**Website:** https://study-sprint-rosy.vercel.app
 
-## 📂 GitHub Repository
+## GitHub Repository
 
 https://github.com/namrathacn/StudySprint
 
@@ -14,48 +14,48 @@ https://github.com/namrathacn/StudySprint
 
 ## Features
 
-### 🔐 Authentication
+### Authentication
 - Firebase Email/Password Authentication
 - Protected routes
 - Secure user sessions
 
-### ✅ Task Management
+### Task Management
 - Create tasks
 - View tasks
-- Mark tasks completed
+- Mark tasks as completed
 - Delete tasks
 - User-specific tasks
 
-### 🎯 Goal Tracking
+### Goal Tracking
 - Create goals
 - Track completion
 - Delete goals
 - User-specific goals
 
-### ⏱️ Focus Timer
+### Focus Timer
 - Pomodoro-style study timer
 - Saves completed study sessions
 - Notification reminder support
 
-### 📊 Dashboard
+### Dashboard
 - Total tasks
 - Completed tasks
 - Goals progress
 - Study sessions
 - Progress tracking
 
-### 👤 Profile
+### Profile
 - User profile
 - Study statistics
 
-### ⚙️ Settings
+### Settings
 - Theme preference
 - Notification settings
 - Logout
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - React.js
@@ -73,17 +73,16 @@ https://github.com/namrathacn/StudySprint
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 StudySprint/
-│
 ├── frontend/
 ├── backend/
 └── README.md
 ```
 
-## 🚀 Deployment
+## Deployment
 
 - Frontend: Vercel
 - Backend: Render
@@ -92,7 +91,7 @@ StudySprint/
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Namratha C N**
 
